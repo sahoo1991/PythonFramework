@@ -87,8 +87,8 @@ if __name__ == '__main__':
     env = '-D env={0}'.format(args.env)
     user = '-D user={0}'.format(args.user)
     run_failures = '-D run_failures={0}'.format(args.run_failures)
-    print(args.o)
-    print(args.f)
+    # print(args.o)
+    # print(args.f)
     if tags is not None:
         tag_list = tags.split(',')
         for tag in tag_list:
