@@ -1,7 +1,7 @@
 import argparse
 import os
 import sys
-
+import datetime
 import behave_model
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -41,6 +41,8 @@ def load_feature_files(working_directory, tags):
 
 # This is the starting position of the flow.
 if __name__ == '__main__':
+    date_time = datetime.datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
+
     # Get all values passed from the CMD Line
     parser = argparse.ArgumentParser(conflict_handler='resolve')
     parser.add_argument('-feature', help='feature file to run', default='All')
@@ -52,7 +54,7 @@ if __name__ == '__main__':
     parser.add_argument('-tag', help='tags to be ran for behave', default=None)
     parser.add_argument('-zephyr', help='run with zephyr update or not', default='false')
     parser.add_argument('-run_failures', help='Run known failure', default=True)
-    parser.add_argument('-folder', help='folder name for zephyr', default=None)
+    parser.add_argument('-folder', help='folder name for zephyr', default="test_folder")
     parser.add_argument('-limit', help='Semaphore limit', default='5')
     args = parser.parse_args()
 
@@ -61,6 +63,12 @@ if __name__ == '__main__':
     if user == 'jenkins':
         # implement arguments to incorporate allure report
         pass
+    # This is to get the allure report in local runs
+    if user == 'local':
+        parser.add_argument('-o', help="Output location for the reports", default="reports/allure_report_{}".format(date_time))
+        parser.add_argument('-f', help='Formatter arguments for allure report', default='allure_behave.formatter:AllureFormatter')
+        args = parser.parse_args()
+    args_dict = dict(vars(args))
     features = ['{0}.feature'.format(x) for x in args.feature.split(',')]
     print(features)
 
@@ -79,7 +87,8 @@ if __name__ == '__main__':
     env = '-D env={0}'.format(args.env)
     user = '-D user={0}'.format(args.user)
     run_failures = '-D run_failures={0}'.format(args.run_failures)
-
+    print(args.o)
+    print(args.f)
     if tags is not None:
         tag_list = tags.split(',')
         for tag in tag_list:
@@ -92,12 +101,16 @@ if __name__ == '__main__':
 
     threads_status = []
     t = None
-
+    for key, value in args_dict.items():
+        print(key)
+        print(value)
     # Limit the thread limiter, default is 5
     behave_model.BehaveModel.set_thread_limiter(limit)
     for i in range(0, len(run_set)):
         feature_filepath = '-D feature_filepath={0}'.format(run_set[i])
         cmd = []
+        cmd.append('-o {}'.format(args.o))
+        cmd.append('-f {}'.format(args.f))
         cmd.append('{0}'.format(run_set[i]))
         cmd.append(env)
         cmd.append(run_failures)
@@ -106,6 +119,7 @@ if __name__ == '__main__':
         cmd.append('-k')
         if run_tag is not None:
             cmd.append(run_tag)
+        print(cmd)
         cmd_line = ' '.join(cmd)
         print(cmd_line)
         # From here Behave is getting called through Threads
