@@ -109,8 +109,8 @@ if __name__ == '__main__':
     for i in range(0, len(run_set)):
         feature_filepath = '-D feature_filepath={0}'.format(run_set[i])
         cmd = []
-        cmd.append('-o {}'.format(args.o))
-        cmd.append('-f {}'.format(args.f))
+        # cmd.append('-o {}'.format(args.o))
+        # cmd.append('-f {}'.format(args.f))
         cmd.append('{0}'.format(run_set[i]))
         cmd.append(env)
         cmd.append(run_failures)
