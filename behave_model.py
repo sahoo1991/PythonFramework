@@ -28,3 +28,5 @@ class BehaveModel(threading.Thread):
             print(self.status)
         except Exception as e:
             self.status = 1
+
+print('Satya')
