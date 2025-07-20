@@ -31,3 +31,6 @@ class BehaveModel(threading.Thread):
 
 print('Satya')
 print("Sangram")
+
+
+print("Tapu")
